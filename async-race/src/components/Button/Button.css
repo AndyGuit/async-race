@@ -26,14 +26,14 @@
 }
 
 .primary {
-  padding: 5px 10px;
+  padding: 2px 5px;
   border-bottom-width: 4px;
   border-bottom-color: var(--btn-primary-dark);
   background-color: var(--btn-primary);
 }
 
 .secondary {
-  padding: 5px 10px;
+  padding: 2px 5px;
   border-bottom-width: 4px;
   border-bottom-color: var(--btn-secondary-dark);
   background-color: var(--btn-secondary);
