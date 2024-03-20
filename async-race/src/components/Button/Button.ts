@@ -4,6 +4,7 @@ interface Props {
   type: 'button' | 'submit';
   classNames: string | Array<string>;
   text: string;
+  disabled?: boolean;
   onClick?: () => void;
 }
 
@@ -19,6 +20,8 @@ export default function Button(props: Props) {
   }
 
   if (props.onClick) element.addEventListener('click', props.onClick);
+
+  if (props.disabled) element.disabled = true;
 
   return element;
 }

@@ -1,0 +1,15 @@
+.input-text {
+  border-radius: 5px;
+  outline: none;
+  padding: 5px;
+  font-size: 1em;
+  background-color: var(--btn-secondary-dark);
+}
+
+.input-color {
+  cursor: pointer;
+  appearance: none;
+  outline: none;
+  border-radius: 5px;
+  height: 40px;
+}
