@@ -1,4 +1,4 @@
-export interface INav {
+export interface INavItem {
   text: string;
   callback: () => void;
 }

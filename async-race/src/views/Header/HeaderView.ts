@@ -1,13 +1,13 @@
 import './Header.css';
 import Button from '../../components/Button/Button';
-import { INav } from '../../types/interfaces';
+import { INavItem } from '../../types/interfaces';
 
 export default class HeaderView {
   private element: HTMLElement;
 
   private children: Array<HTMLElement>;
 
-  constructor(navigation: INav[]) {
+  constructor(navigation: INavItem[]) {
     this.element = document.createElement('header');
     this.children = [];
 
@@ -51,8 +51,9 @@ export default class HeaderView {
     return this.element.getAttribute(attribute);
   }
 
-  createNavigation(navigation: INav[]) {
+  createNavigation(navigation: INavItem[]) {
     const navEl = document.createElement('nav');
+    navEl.classList.add('navigation');
 
     const controls = navigation.map((nav) => {
       const { text, callback } = nav;

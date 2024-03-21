@@ -8,6 +8,7 @@
   --input-primary: deepskyblue;
   --success: green;
   --danger: crimson;
+  --disabled: gray;
 }
 
 *,
@@ -27,5 +28,6 @@ li {
 body {
   background: #000;
   color: white;
-  font-size: 22px;
+  font-size: 18px;
+  padding: 0.5em;
 }

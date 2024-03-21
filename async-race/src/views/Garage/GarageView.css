@@ -1,0 +1,10 @@
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.cars-controls {
+  display: flex;
+  gap: 1em;
+}

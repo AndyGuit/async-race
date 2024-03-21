@@ -1,9 +1,19 @@
+.input-wrapper {
+  display: flex;
+  gap: 10px;
+}
+
 .input-text {
+  width: 200px;
   border-radius: 5px;
   outline: none;
   padding: 5px;
   font-size: 1em;
   background-color: var(--btn-secondary-dark);
+
+  &:disabled {
+    background-color: var(--disabled);
+  }
 }
 
 .input-color {
