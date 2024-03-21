@@ -1,16 +1,19 @@
+import './Header.css';
 import Button from '../../components/Button/Button';
-import { IViewParams } from '../../types/interfaces';
+import { INav } from '../../types/interfaces';
 
 export default class HeaderView {
   private element: HTMLElement;
 
   private children: Array<HTMLElement>;
 
-  constructor(params: IViewParams, ...children: Array<HTMLElement>) {
-    this.element = document.createElement(params.tagName);
-    this.children = children;
+  constructor(navigation: INav[]) {
+    this.element = document.createElement('header');
+    this.children = [];
 
-    this.createNavigation();
+    this.element.classList.add('header');
+
+    this.createNavigation(navigation);
   }
 
   getElement() {
@@ -48,11 +51,21 @@ export default class HeaderView {
     return this.element.getAttribute(attribute);
   }
 
-  createNavigation() {
+  createNavigation(navigation: INav[]) {
     const navEl = document.createElement('nav');
-    const toGarageBtn = Button({ type: 'button', text: 'to garage', classNames: 'primary' });
-    const toWinnersBtn = Button({ type: 'button', text: 'to winners', classNames: 'primary' });
-    navEl.append(toGarageBtn, toWinnersBtn);
+
+    const controls = navigation.map((nav) => {
+      const { text, callback } = nav;
+
+      return Button({
+        type: 'button',
+        text,
+        classNames: 'primary',
+        onClick: callback,
+      });
+    });
+
+    navEl.append(...controls);
 
     this.append(navEl);
   }

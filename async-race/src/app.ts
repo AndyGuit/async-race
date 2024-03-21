@@ -1,33 +1,34 @@
 import HeaderView from './views/Header/HeaderView';
+import MainView from './views/Main/MainView';
 
 export default class App {
   private element: HTMLElement;
 
   private header: HeaderView;
 
+  private main: MainView;
+
   constructor() {
     this.element = document.createElement('div');
     this.element.setAttribute('id', 'app');
 
-    this.header = new HeaderView({ tagName: 'header', classNames: '' });
+    this.main = new MainView();
+
+    this.header = new HeaderView([
+      {
+        text: 'to garage',
+        callback: this.main.renderGarageView.bind(this.main),
+      },
+      {
+        text: 'to winners',
+        callback: this.main.renderWinnersView.bind(this.main),
+      },
+    ]);
   }
 
   init() {
-    this.element.textContent = 'This is garage view';
-    this.element.append(this.header.getElement());
-
-    console.log(this.header);
+    this.element.append(this.header.getElement(), this.main.getElement());
 
     document.body.append(this.element);
   }
 }
-
-// const btn = Button({ text: 'to garage', classNames: 'primary', type: 'button' });
-// const btn2 = Button({ text: 'create', classNames: 'secondary', type: 'button' });
-// const inpt = Input({ classNames: 'input-text', type: 'text', value: '123' });
-// const inpt2 = Input({ classNames: 'input-color', type: 'color', value: '#ff0000' });
-// const car = CarItem({ carName: 'Tesla', carColor: '#ff0000' });
-
-// const app = document.querySelector<HTMLDivElement>('#app');
-
-// app?.append(...[btn, btn2, inpt, inpt2, car]);
