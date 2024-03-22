@@ -1,0 +1,13 @@
+.winners-table {
+  font-size: 1.2em;
+}
+
+.winners-thead {
+  color: black;
+  background-color: var(--btn-primary);
+
+  & th {
+    cursor: pointer;
+    padding: 5px 10px;
+  }
+}

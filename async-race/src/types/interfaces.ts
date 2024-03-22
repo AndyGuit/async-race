@@ -29,3 +29,7 @@ export interface IWinnerData {
   wins: number;
   time: number;
 }
+
+export interface IWinnerRowData extends IWinnerData, ICarData {
+  number: number;
+}

@@ -1,0 +1,10 @@
+.winner-row {
+  & td {
+    padding: 5px 10px;
+
+    /* Remove padding from car icon */
+    &:nth-child(2) {
+      padding: 0;
+    }
+  }
+}
