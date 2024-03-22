@@ -5,7 +5,7 @@ interface Props {
   classNames: string | Array<string>;
   text: string;
   disabled?: boolean;
-  onClick?: () => void;
+  onClick?: (e: MouseEvent) => void;
 }
 
 export default function Button(props: Props) {

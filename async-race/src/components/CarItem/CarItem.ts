@@ -5,20 +5,22 @@ import CarIcon from '../CarIcon/CarIcon';
 import FlagIcon from '../FlagIcon/FlagIcon';
 
 interface Props {
-  carName: string;
-  carColor: string;
+  name: string;
+  color: string;
+  id: number;
 }
 
 export default function CarItem(props: Props) {
   const element = document.createElement('li');
   element.classList.add('car-item');
+  element.setAttribute('data-id', props.id.toString());
 
   const editButtonsWrapper = document.createElement('div');
   editButtonsWrapper.classList.add('car-item__select');
   const selectBtn = Button({ text: 'select', classNames: 'secondary', type: 'button' });
   const removeBtn = Button({ text: 'remove', classNames: 'secondary', type: 'button' });
   const carNameEl = document.createElement('span');
-  carNameEl.textContent = props.carName;
+  carNameEl.textContent = props.name;
 
   const controlBtnsWrapper = document.createElement('div');
   const startBtn = Button({ text: 'start', classNames: 'small-primary', type: 'button' });
@@ -28,7 +30,7 @@ export default function CarItem(props: Props) {
     type: 'button',
     disabled: true,
   });
-  const carIcon = CarIcon(props.carColor);
+  const carIcon = CarIcon(props.color);
   const flagIcon = FlagIcon();
 
   controlBtnsWrapper.classList.add('car-item__controls');

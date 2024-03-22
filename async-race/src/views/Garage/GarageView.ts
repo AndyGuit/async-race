@@ -1,16 +1,32 @@
 import './GarageView.css';
 import Button from '../../components/Button/Button';
 import Input from '../../components/Input/Input';
-import { getAllCars } from '../../api/CarsApi';
+import { createCar, deleteCar, getAllCars } from '../../api/CarsApi';
 import CarItem from '../../components/CarItem/CarItem';
 import { ICarResponseData } from '../../types/interfaces';
 
 export default class GarageView {
   private element: HTMLElement;
 
+  private carsListEl: HTMLUListElement;
+
+  private garageH1El: HTMLHeadingElement;
+
+  private curPageEl: HTMLHeadingElement;
+
+  private page: number;
+
   constructor() {
     this.element = document.createElement('div');
     this.element.classList.add('garage-wrapper');
+
+    this.page = 1;
+
+    this.garageH1El = document.createElement('h1');
+    this.curPageEl = document.createElement('h2');
+
+    this.carsListEl = document.createElement('ul');
+    this.addCarListListener();
 
     this.init();
   }
@@ -62,6 +78,7 @@ export default class GarageView {
       classNames: 'secondary',
       text: btnText,
       disabled: isDisabled,
+      onClick: this.createNewCar.bind(this),
     });
 
     wrapper.append(input, color, btn);
@@ -69,8 +86,31 @@ export default class GarageView {
     return wrapper;
   }
 
+  async createNewCar(e: MouseEvent) {
+    const button = e.target as HTMLButtonElement;
+    const colorInput = button.previousElementSibling as HTMLInputElement;
+    const nameInput = colorInput?.previousElementSibling as HTMLInputElement;
+
+    if (colorInput && nameInput) {
+      // console.log({ color: colorInput.value, name: nameInput.value });
+      await createCar({ color: colorInput.value, name: nameInput.value });
+
+      const { cars } = await getAllCars(this.page);
+
+      this.garageH1El.remove();
+      this.garageH1El = document.createElement('h1');
+      this.curPageEl.remove();
+      this.curPageEl = document.createElement('h2');
+      this.renderHeadings(cars.length);
+
+      this.carsListEl.remove();
+      this.carsListEl = document.createElement('ul');
+      this.renderCarsList(cars);
+    }
+  }
+
   async init() {
-    const { totalCars, cars } = await getAllCars(1);
+    const { totalCars, cars } = await getAllCars(this.page);
 
     this.renderControls();
 
@@ -83,23 +123,30 @@ export default class GarageView {
   }
 
   renderHeadings(numOfCars: number) {
-    const h1 = document.createElement('h1');
-    h1.textContent = `Garage (${numOfCars})`;
+    this.garageH1El.textContent = `Garage (${numOfCars})`;
 
-    const h2 = document.createElement('h2');
-    h2.textContent = `Page #${1}`;
+    this.curPageEl.textContent = `Page #${this.page}`;
 
-    this.element.append(h1, h2);
+    this.element.append(this.garageH1El, this.curPageEl);
+  }
+
+  addCarListListener() {
+    this.carsListEl.addEventListener('click', (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const carItemEl: HTMLLIElement | null = target.closest('.car-item');
+
+      if (!carItemEl) return;
+
+      console.log(carItemEl);
+    });
   }
 
   renderCarsList(cars: ICarResponseData[]) {
-    const ul = document.createElement('ul');
-    ul.classList.add('cars-list');
+    this.carsListEl.classList.add('cars-list');
+    const carItems = cars.map((car) => CarItem({ ...car }));
 
-    const carItems = cars.map((car) => CarItem({ carColor: car.color, carName: car.name }));
+    this.carsListEl.append(...carItems);
 
-    ul.append(...carItems);
-
-    this.element.append(ul);
+    this.element.append(this.carsListEl);
   }
 }
