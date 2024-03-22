@@ -1,9 +1,12 @@
 import GarageView from '../Garage/GarageView';
+import WinnersView from '../Winners/WinnersView';
 
 export default class MainView {
   private element: HTMLElement;
 
   private garageView: GarageView;
+
+  private winnersView: WinnersView;
 
   private children: Array<HTMLElement>;
 
@@ -13,6 +16,8 @@ export default class MainView {
     this.children = [];
 
     this.garageView = new GarageView();
+
+    this.winnersView = new WinnersView();
 
     this.renderGarageView();
   }
@@ -39,10 +44,8 @@ export default class MainView {
   renderWinnersView() {
     this.destroyChildren();
 
-    const div = document.createElement('div');
-    div.textContent = 'Winners view';
-    this.children.push(div);
+    this.children.push(this.winnersView.getElement());
 
-    this.element.append(div);
+    this.element.append(this.winnersView.getElement());
   }
 }
