@@ -2,9 +2,17 @@
   display: flex;
   flex-direction: column;
   gap: 0.5em;
+
+  margin-bottom: 3em;
 }
 
 .cars-controls {
   display: flex;
+  gap: 1em;
+}
+
+.cars-list {
+  display: flex;
+  flex-direction: column;
   gap: 1em;
 }

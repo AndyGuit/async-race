@@ -2,6 +2,8 @@ import './GarageView.css';
 import Button from '../../components/Button/Button';
 import Input from '../../components/Input/Input';
 import { getAllWinners } from '../../api/WinnersApi';
+import { getAllCars } from '../../api/CarsApi';
+import CarItem from '../../components/CarItem/CarItem';
 
 export default class GarageView {
   private element: HTMLElement;
@@ -11,8 +13,6 @@ export default class GarageView {
     this.element.classList.add('garage-wrapper');
 
     this.init();
-
-    this.fetchCars();
   }
 
   renderControls() {
@@ -69,12 +69,29 @@ export default class GarageView {
     return wrapper;
   }
 
-  init() {
+  async init() {
     this.renderControls();
+
+    await this.renderCarsList();
   }
 
   getElement() {
     return this.element;
+  }
+
+  async renderCarsList() {
+    const cars = await getAllCars(1);
+
+    const ul = document.createElement('ul');
+    ul.classList.add('cars-list');
+
+    const carItems = cars.map((car) => {
+      return CarItem({ carColor: car.color, carName: car.name });
+    });
+
+    ul.append(...carItems);
+
+    this.element.append(ul);
   }
 
   async fetchCars() {

@@ -8,6 +8,10 @@ export interface ICarData {
   color: string;
 }
 
+export interface ICarResponseData extends ICarData {
+  id: number;
+}
+
 export interface IWinnersParams {
   page?: number;
   limit?: number;
