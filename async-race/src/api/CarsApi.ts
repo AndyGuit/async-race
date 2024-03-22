@@ -1,12 +1,18 @@
-import { ICarData, ICarResponseData } from '../types/interfaces';
+import { IAllCarsResponseData, ICarData, ICarResponseData } from '../types/interfaces';
 import { API_URL, LIMIT_PER_PAGE } from '../utils/globalVariables';
 
-export async function getAllCars(page: number): Promise<ICarResponseData[]> {
+export async function getAllCars(page: number): Promise<IAllCarsResponseData> {
   const query = `_page=${page}&_limit=${LIMIT_PER_PAGE}`;
   const res = await fetch(`${API_URL}/garage?${query}`);
-  const data = await res.json();
 
-  return data;
+  const totalCount = Number(res.headers.get('X-Total-Count'));
+
+  const data: ICarResponseData[] = await res.json();
+
+  return {
+    totalCars: totalCount,
+    cars: data,
+  };
 }
 
 export async function getCar(carId: number) {

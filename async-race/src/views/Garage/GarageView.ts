@@ -79,15 +79,25 @@ export default class GarageView {
     return this.element;
   }
 
+  renderHeadings(numOfCars: number) {
+    const h1 = document.createElement('h1');
+    h1.textContent = `Garage (${numOfCars})`;
+
+    const h2 = document.createElement('h2');
+    h2.textContent = `Page #${1}`;
+
+    this.element.append(h1, h2);
+  }
+
   async renderCarsList() {
-    const cars = await getAllCars(1);
+    const { totalCars, cars } = await getAllCars(1);
+
+    this.renderHeadings(totalCars);
 
     const ul = document.createElement('ul');
     ul.classList.add('cars-list');
 
-    const carItems = cars.map((car) => {
-      return CarItem({ carColor: car.color, carName: car.name });
-    });
+    const carItems = cars.map((car) => CarItem({ carColor: car.color, carName: car.name }));
 
     ul.append(...carItems);
 

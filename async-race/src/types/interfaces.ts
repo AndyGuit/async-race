@@ -12,6 +12,11 @@ export interface ICarResponseData extends ICarData {
   id: number;
 }
 
+export interface IAllCarsResponseData {
+  totalCars: number;
+  cars: Array<ICarResponseData>;
+}
+
 export interface IWinnersParams {
   page?: number;
   limit?: number;
