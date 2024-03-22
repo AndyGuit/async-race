@@ -95,13 +95,13 @@ export default class GarageView {
       // console.log({ color: colorInput.value, name: nameInput.value });
       await createCar({ color: colorInput.value, name: nameInput.value });
 
-      const { cars } = await getAllCars(this.page);
+      const { totalCars, cars } = await getAllCars(this.page);
 
       this.garageH1El.remove();
       this.garageH1El = document.createElement('h1');
       this.curPageEl.remove();
       this.curPageEl = document.createElement('h2');
-      this.renderHeadings(cars.length);
+      this.renderHeadings(totalCars);
 
       this.carsListEl.remove();
       this.carsListEl = document.createElement('ul');
