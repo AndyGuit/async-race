@@ -4,6 +4,7 @@ import Input from '../../components/Input/Input';
 // prettier-ignore
 import {
   createCar,
+  deleteCar,
   getAllCars,
   getCar,
   updateCar,
@@ -175,6 +176,19 @@ export default class GarageView {
     this.renderCarsList(cars);
   }
 
+  async deleteSelectedCar(carId: number) {
+    await deleteCar(carId);
+
+    const { cars, totalCars } = await getAllCars(this.page);
+
+    console.log(cars);
+
+    this.carsListEl.remove();
+    this.carsListEl = document.createElement('ul');
+    this.changeHeadingsTextContent(totalCars);
+    this.renderCarsList(cars);
+  }
+
   addCarListListener() {
     this.carsListEl.addEventListener('click', (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -185,6 +199,13 @@ export default class GarageView {
 
       if (target.classList.contains('select')) {
         this.selectCar(carId);
+        return;
+      }
+
+      if (target.classList.contains('remove')) {
+        console.log('remove');
+        this.deleteSelectedCar(carId);
+        return;
       }
     });
   }
