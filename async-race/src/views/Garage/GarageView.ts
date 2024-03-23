@@ -181,8 +181,6 @@ export default class GarageView {
 
     const { cars, totalCars } = await getAllCars(this.page);
 
-    console.log(cars);
-
     this.carsListEl.remove();
     this.carsListEl = document.createElement('ul');
     this.changeHeadingsTextContent(totalCars);
@@ -212,6 +210,7 @@ export default class GarageView {
 
   renderCarsList(cars: ICarResponseData[]) {
     this.carsListEl.classList.add('cars-list');
+    this.addCarListListener();
     const carItems = cars.map((car) => CarItem({ ...car }));
 
     this.carsListEl.append(...carItems);
