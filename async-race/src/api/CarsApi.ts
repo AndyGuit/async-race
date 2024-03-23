@@ -15,7 +15,7 @@ export async function getAllCars(page: number): Promise<IAllCarsResponseData> {
   };
 }
 
-export async function getCar(carId: number) {
+export async function getCar(carId: number): Promise<ICarResponseData> {
   /* TODO: trycatch */
   const res = await fetch(`${API_URL}/garage/${carId}`);
   const data = await res.json();

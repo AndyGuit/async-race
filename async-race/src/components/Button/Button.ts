@@ -14,7 +14,7 @@ export default function Button(props: Props) {
   element.textContent = props.text;
 
   if (Array.isArray(props.classNames)) {
-    element.classList.add(props.classNames.join(' '));
+    element.classList.add(...props.classNames);
   } else {
     element.classList.add(props.classNames);
   }

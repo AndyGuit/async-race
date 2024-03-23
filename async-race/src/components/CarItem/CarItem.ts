@@ -17,8 +17,16 @@ export default function CarItem(props: Props) {
 
   const editButtonsWrapper = document.createElement('div');
   editButtonsWrapper.classList.add('car-item__select');
-  const selectBtn = Button({ text: 'select', classNames: 'secondary', type: 'button' });
-  const removeBtn = Button({ text: 'remove', classNames: 'secondary', type: 'button' });
+  const selectBtn = Button({
+    text: 'select',
+    classNames: ['select', 'secondary'],
+    type: 'button',
+  });
+  const removeBtn = Button({
+    text: 'remove',
+    classNames: ['remove', 'secondary'],
+    type: 'button',
+  });
   const carNameEl = document.createElement('span');
   carNameEl.textContent = props.name;
 

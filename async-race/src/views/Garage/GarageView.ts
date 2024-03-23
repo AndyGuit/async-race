@@ -1,7 +1,13 @@
 import './GarageView.css';
 import Button from '../../components/Button/Button';
 import Input from '../../components/Input/Input';
-import { createCar, deleteCar, getAllCars } from '../../api/CarsApi';
+// prettier-ignore
+import {
+  createCar,
+  getAllCars,
+  getCar,
+  updateCar,
+} from '../../api/CarsApi';
 import CarItem from '../../components/CarItem/CarItem';
 import { ICarResponseData } from '../../types/interfaces';
 
@@ -14,6 +20,10 @@ export default class GarageView {
 
   private curPageEl: HTMLHeadingElement;
 
+  private createCarEl: HTMLDivElement;
+
+  private updateCarEl: HTMLDivElement;
+
   private page: number;
 
   constructor() {
@@ -24,6 +34,8 @@ export default class GarageView {
 
     this.garageH1El = document.createElement('h1');
     this.curPageEl = document.createElement('h2');
+    this.createCarEl = this.createInputField('create', false, this.createNewCar.bind(this));
+    this.updateCarEl = this.createInputField('update', true, this.updateSelectedCar.bind(this));
 
     this.carsListEl = document.createElement('ul');
     this.addCarListListener();
@@ -35,11 +47,9 @@ export default class GarageView {
     const wrapper = document.createElement('div');
     wrapper.classList.add('controls');
 
-    const createField = this.createInputField('create', false);
-    const updateField = this.createInputField('update', true);
     const carsControls = this.createCarsControls();
 
-    wrapper.append(createField, updateField, carsControls);
+    wrapper.append(this.createCarEl, this.updateCarEl, carsControls);
     this.element.append(wrapper);
   }
 
@@ -55,7 +65,7 @@ export default class GarageView {
     return wrapper;
   }
 
-  createInputField(btnText: string, isDisabled: boolean) {
+  createInputField(btnText: string, isDisabled: boolean, btnOnClick: (e: MouseEvent) => void) {
     const wrapper = document.createElement('div');
     wrapper.classList.add('input-wrapper');
 
@@ -78,7 +88,7 @@ export default class GarageView {
       classNames: 'secondary',
       text: btnText,
       disabled: isDisabled,
-      onClick: this.createNewCar.bind(this),
+      onClick: btnOnClick,
     });
 
     wrapper.append(input, color, btn);
@@ -128,14 +138,50 @@ export default class GarageView {
     this.element.append(this.garageH1El, this.curPageEl);
   }
 
+  async selectCar(carId: number) {
+    const selectedCar = await getCar(carId);
+    const textInput: HTMLInputElement | null = this.updateCarEl.querySelector('.input-text');
+    const colorInput: HTMLInputElement | null = this.updateCarEl.querySelector('.input-color');
+    const updateBtn = this.updateCarEl.querySelector('button');
+
+    [textInput, colorInput, updateBtn].forEach((el) => el?.removeAttribute('disabled'));
+
+    if (textInput) textInput.value = selectedCar.name;
+    if (colorInput) colorInput.value = selectedCar.color;
+    if (updateBtn) updateBtn.setAttribute('data-car-id', selectedCar.id.toString());
+  }
+
+  async updateSelectedCar(e: MouseEvent) {
+    const button = e.target as HTMLButtonElement;
+    const colorInput = button.previousElementSibling as HTMLInputElement;
+    const nameInput = colorInput?.previousElementSibling as HTMLInputElement;
+
+    const selectedCarId = Number(button.getAttribute('data-car-id'));
+
+    const updatedData = {
+      name: nameInput.value,
+      color: colorInput.value,
+    };
+
+    await updateCar(selectedCarId, updatedData);
+    const { cars } = await getAllCars(this.page);
+
+    this.carsListEl.remove();
+    this.carsListEl = document.createElement('ul');
+    this.renderCarsList(cars);
+  }
+
   addCarListListener() {
     this.carsListEl.addEventListener('click', (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const carItemEl: HTMLLIElement | null = target.closest('.car-item');
 
       if (!carItemEl) return;
+      const carId = Number(carItemEl.getAttribute('data-id'));
 
-      console.log(carItemEl);
+      if (target.classList.contains('select')) {
+        this.selectCar(carId);
+      }
     });
   }
 
