@@ -163,6 +163,10 @@ export default class GarageView {
       color: colorInput.value,
     };
 
+    [button, colorInput, nameInput].forEach((el) => el.setAttribute('disabled', ''));
+    nameInput.value = '';
+    colorInput.value = '#000000';
+
     await updateCar(selectedCarId, updatedData);
     const { cars } = await getAllCars(this.page);
 
