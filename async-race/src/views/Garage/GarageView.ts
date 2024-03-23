@@ -13,6 +13,7 @@ import CarItem from '../../components/CarItem/CarItem';
 import { ICarResponseData } from '../../types/interfaces';
 import { deleteWinner } from '../../api/WinnersApi';
 import { generateRandomCarName, generateRandomColor } from '../../utils/helperFunctions';
+import { LIMIT_PER_PAGE } from '../../utils/globalVariables';
 
 export default class GarageView {
   private element: HTMLElement;
@@ -27,6 +28,8 @@ export default class GarageView {
 
   private updateCarEl: HTMLDivElement;
 
+  private paginationEl: HTMLDivElement;
+
   private page: number;
 
   constructor() {
@@ -37,6 +40,7 @@ export default class GarageView {
 
     this.garageH1El = document.createElement('h1');
     this.curPageEl = document.createElement('h2');
+    this.paginationEl = document.createElement('div');
     this.createCarEl = this.createInputField('create', false, this.createNewCar.bind(this));
     this.updateCarEl = this.createInputField('update', true, this.updateSelectedCar.bind(this));
 
@@ -128,6 +132,7 @@ export default class GarageView {
 
     this.renderHeadings();
     this.changeHeadingsTextContent(totalCars);
+    this.renderPagination(totalCars);
     this.renderCarsList(cars);
   }
 
@@ -237,6 +242,58 @@ export default class GarageView {
         this.deleteSelectedCar(carId);
       }
     });
+  }
+
+  async goToNextPage() {
+    this.page += 1;
+    const { cars, totalCars } = await getAllCars(this.page);
+    this.changeHeadingsTextContent(totalCars);
+
+    this.paginationEl.remove();
+    this.paginationEl = document.createElement('div');
+    this.carsListEl.remove();
+    this.carsListEl = document.createElement('ul');
+
+    this.renderPagination(totalCars);
+    this.renderCarsList(cars);
+  }
+
+  async goToPrevPage() {
+    this.page -= 1;
+    const { cars, totalCars } = await getAllCars(this.page);
+    this.changeHeadingsTextContent(totalCars);
+
+    this.paginationEl.remove();
+    this.paginationEl = document.createElement('div');
+    this.carsListEl.remove();
+    this.carsListEl = document.createElement('ul');
+
+    this.renderPagination(totalCars);
+    this.renderCarsList(cars);
+  }
+
+  renderPagination(totalCars: number) {
+    const numOfPages = Math.ceil(totalCars / LIMIT_PER_PAGE);
+
+    this.paginationEl.classList.add('pagination');
+
+    const prevBtn = Button({
+      classNames: 'secondary',
+      text: 'prev',
+      type: 'button',
+      disabled: this.page === 1,
+      onClick: this.goToPrevPage.bind(this),
+    });
+    const nextBtn = Button({
+      classNames: 'secondary',
+      text: 'next',
+      type: 'button',
+      disabled: this.page >= numOfPages,
+      onClick: this.goToNextPage.bind(this),
+    });
+
+    this.paginationEl.append(prevBtn, nextBtn);
+    this.element.append(this.paginationEl);
   }
 
   renderCarsList(cars: ICarResponseData[]) {

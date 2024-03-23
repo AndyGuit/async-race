@@ -15,4 +15,11 @@
   display: flex;
   flex-direction: column;
   gap: 1em;
+  margin-bottom: 3em;
+}
+
+.pagination {
+  display: flex;
+  gap: 1em;
+  margin-bottom: 1.5em;
 }

@@ -69,7 +69,6 @@ export default class WinnersView {
   async init() {
     const winners = await getAllWinners();
 
-    console.log('winners: ', winners);
     this.renderHeadings(winners.length);
     this.renderTable();
     this.renderWinners();
