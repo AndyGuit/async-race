@@ -151,9 +151,11 @@ export default class GarageView {
       color: generateRandomColor(),
     }));
 
-    for (const car of carsArr) {
-      await createCar(car);
-    }
+    await Promise.all(
+      carsArr.map(async (car) => {
+        await createCar(car);
+      }),
+    );
 
     const { cars, totalCars } = await getAllCars(this.page);
 

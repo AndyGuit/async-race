@@ -51,9 +51,9 @@ export async function deleteWinner(id: number): Promise<IWinnerData | null> {
   if (res.ok) {
     const data = await res.json();
     return data;
-  } else {
-    return null;
   }
+
+  return null;
 }
 
 export async function updateWinner(winnerData: IWinnerData) {
