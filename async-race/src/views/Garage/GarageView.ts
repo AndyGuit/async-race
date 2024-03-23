@@ -92,16 +92,11 @@ export default class GarageView {
     const nameInput = colorInput?.previousElementSibling as HTMLInputElement;
 
     if (colorInput && nameInput) {
-      // console.log({ color: colorInput.value, name: nameInput.value });
       await createCar({ color: colorInput.value, name: nameInput.value });
 
       const { totalCars, cars } = await getAllCars(this.page);
 
-      this.garageH1El.remove();
-      this.garageH1El = document.createElement('h1');
-      this.curPageEl.remove();
-      this.curPageEl = document.createElement('h2');
-      this.renderHeadings(totalCars);
+      this.changeHeadingsTextContent(totalCars);
 
       this.carsListEl.remove();
       this.carsListEl = document.createElement('ul');
@@ -114,7 +109,8 @@ export default class GarageView {
 
     this.renderControls();
 
-    this.renderHeadings(totalCars);
+    this.renderHeadings();
+    this.changeHeadingsTextContent(totalCars);
     this.renderCarsList(cars);
   }
 
@@ -122,11 +118,13 @@ export default class GarageView {
     return this.element;
   }
 
-  renderHeadings(numOfCars: number) {
+  changeHeadingsTextContent(numOfCars: number) {
     this.garageH1El.textContent = `Garage (${numOfCars})`;
 
     this.curPageEl.textContent = `Page #${this.page}`;
+  }
 
+  renderHeadings() {
     this.element.append(this.garageH1El, this.curPageEl);
   }
 
