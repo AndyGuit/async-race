@@ -12,6 +12,7 @@ import {
 import CarItem from '../../components/CarItem/CarItem';
 import { ICarResponseData } from '../../types/interfaces';
 import { deleteWinner } from '../../api/WinnersApi';
+import { generateRandomCarName, generateRandomColor } from '../../utils/helperFunctions';
 
 export default class GarageView {
   private element: HTMLElement;
@@ -59,7 +60,12 @@ export default class GarageView {
     wrapper.classList.add('cars-controls');
     const raceBtn = Button({ text: 'race', type: 'button', classNames: 'primary' });
     const resetBtn = Button({ text: 'reset', type: 'button', classNames: 'primary' });
-    const generateBtn = Button({ text: 'generate cars', type: 'button', classNames: 'secondary' });
+    const generateBtn = Button({
+      text: 'generate cars',
+      type: 'button',
+      classNames: 'secondary',
+      onClick: this.generateRandomCars.bind(this),
+    });
 
     wrapper.append(raceBtn, resetBtn, generateBtn);
 
@@ -137,6 +143,26 @@ export default class GarageView {
 
   renderHeadings() {
     this.element.append(this.garageH1El, this.curPageEl);
+  }
+
+  async generateRandomCars() {
+    const carsArr = Array.from({ length: 100 }, () => ({
+      name: generateRandomCarName(),
+      color: generateRandomColor(),
+    }));
+
+    for (const car of carsArr) {
+      await createCar(car);
+    }
+
+    const { cars, totalCars } = await getAllCars(this.page);
+
+    console.log(cars);
+
+    this.carsListEl.remove();
+    this.carsListEl = document.createElement('ul');
+    this.changeHeadingsTextContent(totalCars);
+    this.renderCarsList(cars);
   }
 
   async selectCar(carId: number) {
