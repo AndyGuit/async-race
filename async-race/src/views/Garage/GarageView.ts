@@ -11,7 +11,7 @@ import {
 } from '../../api/CarsApi';
 import CarItem from '../../components/CarItem/CarItem';
 import { ICarResponseData } from '../../types/interfaces';
-import { deleteWinner, getWinner } from '../../api/WinnersApi';
+import { deleteWinner } from '../../api/WinnersApi';
 
 export default class GarageView {
   private element: HTMLElement;
@@ -207,7 +207,6 @@ export default class GarageView {
 
       if (target.classList.contains('remove')) {
         this.deleteSelectedCar(carId);
-        return;
       }
     });
   }
