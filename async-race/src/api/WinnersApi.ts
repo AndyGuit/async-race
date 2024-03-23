@@ -41,15 +41,19 @@ export async function createWinner(winnerData: IWinnerData) {
   return data;
 }
 
-export async function deleteWinner(id: number) {
+export async function deleteWinner(id: number): Promise<IWinnerData | null> {
   /* TODO: trycatch */
+
   const res = await fetch(`${API_URL}/winners/${id}`, {
     method: 'DELETE',
   });
 
-  const data = await res.json();
-
-  return data;
+  if (res.ok) {
+    const data = await res.json();
+    return data;
+  } else {
+    return null;
+  }
 }
 
 export async function updateWinner(winnerData: IWinnerData) {

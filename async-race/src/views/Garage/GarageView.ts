@@ -11,6 +11,7 @@ import {
 } from '../../api/CarsApi';
 import CarItem from '../../components/CarItem/CarItem';
 import { ICarResponseData } from '../../types/interfaces';
+import { deleteWinner, getWinner } from '../../api/WinnersApi';
 
 export default class GarageView {
   private element: HTMLElement;
@@ -39,7 +40,6 @@ export default class GarageView {
     this.updateCarEl = this.createInputField('update', true, this.updateSelectedCar.bind(this));
 
     this.carsListEl = document.createElement('ul');
-    this.addCarListListener();
 
     this.init();
   }
@@ -178,6 +178,7 @@ export default class GarageView {
 
   async deleteSelectedCar(carId: number) {
     await deleteCar(carId);
+    const isWinnerRemoved = await deleteWinner(carId);
 
     const { cars, totalCars } = await getAllCars(this.page);
 
@@ -185,6 +186,10 @@ export default class GarageView {
     this.carsListEl = document.createElement('ul');
     this.changeHeadingsTextContent(totalCars);
     this.renderCarsList(cars);
+
+    if (isWinnerRemoved) {
+      // re render winners table
+    }
   }
 
   addCarListListener() {
@@ -201,7 +206,6 @@ export default class GarageView {
       }
 
       if (target.classList.contains('remove')) {
-        console.log('remove');
         this.deleteSelectedCar(carId);
         return;
       }
