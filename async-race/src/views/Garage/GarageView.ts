@@ -121,6 +121,9 @@ export default class GarageView {
 
       this.carsListEl.remove();
       this.carsListEl = document.createElement('ul');
+      this.paginationEl.remove();
+      this.paginationEl = document.createElement('div');
+      this.renderPagination(totalCars);
       this.renderCarsList(cars);
     }
   }
@@ -163,8 +166,6 @@ export default class GarageView {
     );
 
     const { cars, totalCars } = await getAllCars(this.page);
-
-    console.log(cars);
 
     this.carsListEl.remove();
     this.carsListEl = document.createElement('ul');
@@ -220,6 +221,9 @@ export default class GarageView {
 
     this.carsListEl.remove();
     this.carsListEl = document.createElement('ul');
+    this.paginationEl.remove();
+    this.paginationEl = document.createElement('div');
+    this.renderPagination(totalCars);
     this.changeHeadingsTextContent(totalCars);
     this.renderCarsList(cars);
 
@@ -243,6 +247,11 @@ export default class GarageView {
 
       if (target.classList.contains('remove')) {
         this.deleteSelectedCar(carId);
+        return;
+      }
+
+      if (target.classList.contains('start')) {
+        console.log('start car: ', carId);
       }
     });
   }

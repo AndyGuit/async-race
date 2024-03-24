@@ -31,10 +31,14 @@ export default function CarItem(props: Props) {
   carNameEl.textContent = props.name;
 
   const controlBtnsWrapper = document.createElement('div');
-  const startBtn = Button({ text: 'start', classNames: 'small-primary', type: 'button' });
+  const startBtn = Button({
+    text: 'start',
+    classNames: ['start', 'small-primary'],
+    type: 'button',
+  });
   const stopBtn = Button({
     text: 'stop',
-    classNames: 'small-secondary',
+    classNames: ['start', 'small-secondary'],
     type: 'button',
     disabled: true,
   });
