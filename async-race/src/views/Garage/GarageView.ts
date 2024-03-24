@@ -168,7 +168,10 @@ export default class GarageView {
 
     this.carsListEl.remove();
     this.carsListEl = document.createElement('ul');
+    this.paginationEl.remove();
+    this.paginationEl = document.createElement('div');
     this.changeHeadingsTextContent(totalCars);
+    this.renderPagination(totalCars);
     this.renderCarsList(cars);
   }
 
