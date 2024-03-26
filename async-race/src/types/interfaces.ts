@@ -33,3 +33,8 @@ export interface IWinnerData {
 export interface IWinnerRowData extends IWinnerData, ICarData {
   number: number;
 }
+
+export interface ICarEngineResponse {
+  velocity: number;
+  distance: number;
+}

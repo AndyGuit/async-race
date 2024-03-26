@@ -271,7 +271,7 @@ export default class GarageView {
 
         const carIcon = target.nextElementSibling as HTMLElement;
 
-        // carIcon.classList.add('car-broke');
+        // carIcon.classList.add('car-crashed');
         carIcon.classList.remove('car-animate');
 
         console.log('stop car: ', carId);

@@ -1,4 +1,9 @@
-import { IAllCarsResponseData, ICarData, ICarResponseData } from '../types/interfaces';
+import {
+  IAllCarsResponseData,
+  ICarData,
+  ICarResponseData,
+  ICarEngineResponse,
+} from '../types/interfaces';
 import { API_URL, LIMIT_PER_PAGE } from '../utils/globalVariables';
 
 export async function getAllCars(page: number): Promise<IAllCarsResponseData> {
@@ -65,8 +70,32 @@ export async function updateCar(carId: number, carData: ICarData) {
   return data;
 }
 
-/*
-TODO:
-  1) Start / Stop Car's Engine
-  2) Switch Car's Engine to Drive Mode
-*/
+export async function startCarEngine(carId: number): Promise<ICarEngineResponse> {
+  const query = `?id=${carId}&status=started`;
+  const res = await fetch(`${API_URL}/engine${query}`, {
+    method: 'PATCH',
+  });
+  const data = await res.json();
+
+  return data;
+}
+
+export async function stopCarEngine(carId: number): Promise<ICarEngineResponse> {
+  const query = `?id=${carId}&status=stopped`;
+  const res = await fetch(`${API_URL}/engine${query}`, {
+    method: 'PATCH',
+  });
+  const data = await res.json();
+
+  return data;
+}
+
+export async function driveCar(carId: number): Promise<{ succes: boolean }> {
+  const query = `?id=${carId}&status=drive`;
+  const res = await fetch(`${API_URL}/engine${query}`, {
+    method: 'PATCH',
+  });
+  const data = await res.json();
+
+  return data;
+}
