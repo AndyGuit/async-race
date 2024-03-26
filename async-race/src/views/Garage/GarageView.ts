@@ -33,6 +33,8 @@ export default class GarageView {
 
   private paginationEl: HTMLDivElement;
 
+  private driveController: AbortController;
+
   private page: number;
 
   constructor() {
@@ -40,6 +42,8 @@ export default class GarageView {
     this.element.classList.add('garage-wrapper');
 
     this.page = 1;
+
+    this.driveController = new AbortController();
 
     this.garageH1El = document.createElement('h1');
     this.curPageEl = document.createElement('h2');
@@ -277,20 +281,25 @@ export default class GarageView {
   }
 
   async startCar(carElement: HTMLElement, carId: number) {
+    this.driveController = new AbortController();
     const { distance, velocity } = await startCarEngine(carId);
     const animationDuration = Math.round(distance / velocity);
 
     console.log({ distance, velocity });
 
+    carElement.classList.remove('car-crashed');
     carElement.setAttribute('style', `animation-duration: ${animationDuration}ms`);
     carElement.classList.add('car-animate');
 
-    const { success } = await driveCar(carId);
+    const { success } = await driveCar(carId, this.driveController.signal);
+
+    console.log('car finished:', success);
 
     if (!success) carElement.classList.add('car-crashed');
   }
 
   async stopCar(carElement: HTMLElement, carId: number) {
+    this.driveController.abort();
     await stopCarEngine(carId);
     carElement.classList.remove('car-animate');
   }

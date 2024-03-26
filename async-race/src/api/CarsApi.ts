@@ -90,11 +90,15 @@ export async function stopCarEngine(carId: number): Promise<ICarEngineResponse> 
   return data;
 }
 
-export async function driveCar(carId: number): Promise<{ success: boolean }> {
+export async function driveCar(
+  carId: number,
+  driveSignal: AbortSignal,
+): Promise<{ success: boolean }> {
   try {
     const query = `?id=${carId}&status=drive`;
     const res = await fetch(`${API_URL}/engine${query}`, {
       method: 'PATCH',
+      signal: driveSignal,
     });
     const data = await res.json();
 
