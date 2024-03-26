@@ -69,7 +69,12 @@ export default class GarageView {
   createCarsControls() {
     const wrapper = document.createElement('div');
     wrapper.classList.add('cars-controls');
-    const raceBtn = Button({ text: 'race', type: 'button', classNames: 'primary' });
+    const raceBtn = Button({
+      text: 'race',
+      type: 'button',
+      classNames: 'primary',
+      onClick: this.startRace.bind(this),
+    });
     const resetBtn = Button({ text: 'reset', type: 'button', classNames: 'primary' });
     const generateBtn = Button({
       text: 'generate cars',
@@ -288,9 +293,8 @@ export default class GarageView {
 
     const { success } = await driveCar(carId, this.driveController.signal);
 
-    console.log('car finished:', success);
-
     if (!success) carIcon?.classList.add('car-crashed');
+    return success;
   }
 
   async stopCar(carItem: HTMLLIElement, carId: number) {
@@ -299,16 +303,34 @@ export default class GarageView {
     const carIcon = carItem.querySelector('.car-icon');
     stopBtn?.setAttribute('disabled', 'true');
 
-    carIcon?.classList.remove('car-animate');
-
     this.driveController.abort();
 
     await stopCarEngine(carId);
+    carIcon?.classList.remove('car-animate');
     startBtn?.removeAttribute('disabled');
   }
 
-  breakCar(carElement: HTMLElement) {
-    carElement.classList.add('car-crashed');
+  async startRace() {
+    const { cars } = await getAllCars(this.page);
+
+    const carItems = cars.map(({ id, name }) => {
+      const carItemEl: HTMLLIElement = this.carsListEl.querySelector(`[data-id="${id}"]`)!;
+      return {
+        id,
+        name,
+        element: carItemEl,
+      };
+    });
+
+    const racePromises = carItems.map((car) => {
+      return new Promise(async (res) => {
+        const isCarFinished = await this.startCar(car.element, car.id);
+        if (isCarFinished) res('car won: ' + car.id);
+      });
+    });
+
+    const winningMessage = await Promise.race(racePromises);
+    console.log(winningMessage);
   }
 
   async goToNextPage() {
