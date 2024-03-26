@@ -90,12 +90,16 @@ export async function stopCarEngine(carId: number): Promise<ICarEngineResponse> 
   return data;
 }
 
-export async function driveCar(carId: number): Promise<{ succes: boolean }> {
-  const query = `?id=${carId}&status=drive`;
-  const res = await fetch(`${API_URL}/engine${query}`, {
-    method: 'PATCH',
-  });
-  const data = await res.json();
+export async function driveCar(carId: number): Promise<{ success: boolean }> {
+  try {
+    const query = `?id=${carId}&status=drive`;
+    const res = await fetch(`${API_URL}/engine${query}`, {
+      method: 'PATCH',
+    });
+    const data = await res.json();
 
-  return data;
+    return data;
+  } catch (error) {
+    return { success: false };
+  }
 }

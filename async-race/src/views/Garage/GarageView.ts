@@ -5,8 +5,11 @@ import Input from '../../components/Input/Input';
 import {
   createCar,
   deleteCar,
+  driveCar,
   getAllCars,
   getCar,
+  startCarEngine,
+  stopCarEngine,
   updateCar,
 } from '../../api/CarsApi';
 import CarItem from '../../components/CarItem/CarItem';
@@ -256,10 +259,8 @@ export default class GarageView {
 
         stopBtn.removeAttribute('disabled');
         const carIcon = stopBtn.nextElementSibling as HTMLElement;
-        const animationDuration = Math.random() * 10;
 
-        carIcon.setAttribute('style', `animation-duration: ${animationDuration}s`);
-        carIcon.classList.add('car-animate');
+        this.startCar(carIcon, carId);
 
         target.setAttribute('disabled', '');
       }
@@ -270,13 +271,32 @@ export default class GarageView {
         target.setAttribute('disabled', '');
 
         const carIcon = target.nextElementSibling as HTMLElement;
-
-        // carIcon.classList.add('car-crashed');
-        carIcon.classList.remove('car-animate');
-
-        console.log('stop car: ', carId);
+        this.stopCar(carIcon, carId);
       }
     });
+  }
+
+  async startCar(carElement: HTMLElement, carId: number) {
+    const { distance, velocity } = await startCarEngine(carId);
+    const animationDuration = Math.round(distance / velocity);
+
+    console.log({ distance, velocity });
+
+    carElement.setAttribute('style', `animation-duration: ${animationDuration}ms`);
+    carElement.classList.add('car-animate');
+
+    const { success } = await driveCar(carId);
+
+    if (!success) carElement.classList.add('car-crashed');
+  }
+
+  async stopCar(carElement: HTMLElement, carId: number) {
+    await stopCarEngine(carId);
+    carElement.classList.remove('car-animate');
+  }
+
+  breakCar(carElement: HTMLElement) {
+    carElement.classList.add('car-crashed');
   }
 
   async goToNextPage() {
