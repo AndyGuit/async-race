@@ -251,7 +251,19 @@ export default class GarageView {
       }
 
       if (target.classList.contains('start')) {
+        const stopBtn = target.nextElementSibling;
+        if (stopBtn) stopBtn.removeAttribute('disabled');
+        target.setAttribute('disabled', '');
+
         console.log('start car: ', carId);
+      }
+
+      if (target.classList.contains('stop')) {
+        const startBtn = target.previousElementSibling;
+        if (startBtn) startBtn.removeAttribute('disabled');
+        target.setAttribute('disabled', '');
+
+        console.log('stop car: ', carId);
       }
     });
   }

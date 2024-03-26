@@ -38,7 +38,7 @@ export default function CarItem(props: Props) {
   });
   const stopBtn = Button({
     text: 'stop',
-    classNames: ['start', 'small-secondary'],
+    classNames: ['stop', 'small-secondary'],
     type: 'button',
     disabled: true,
   });
