@@ -258,50 +258,53 @@ export default class GarageView {
       }
 
       if (target.classList.contains('start')) {
-        const stopBtn = target.nextElementSibling;
-        if (!stopBtn) return;
-
-        stopBtn.removeAttribute('disabled');
-        const carIcon = stopBtn.nextElementSibling as HTMLElement;
-
-        this.startCar(carIcon, carId);
-
-        target.setAttribute('disabled', '');
+        this.startCar(carItemEl, carId);
+        return;
       }
 
       if (target.classList.contains('stop')) {
-        const startBtn = target.previousElementSibling;
-        if (startBtn) startBtn.removeAttribute('disabled');
-        target.setAttribute('disabled', '');
-
-        const carIcon = target.nextElementSibling as HTMLElement;
-        this.stopCar(carIcon, carId);
+        this.stopCar(carItemEl, carId);
       }
     });
   }
 
-  async startCar(carElement: HTMLElement, carId: number) {
+  async startCar(carItem: HTMLLIElement, carId: number) {
+    const startBtn = carItem.querySelector('button.start');
+    const stopBtn = carItem.querySelector('button.stop');
+    const carIcon = carItem.querySelector('.car-icon');
+
+    startBtn?.setAttribute('disabled', 'true');
+
     this.driveController = new AbortController();
     const { distance, velocity } = await startCarEngine(carId);
+
+    stopBtn?.removeAttribute('disabled');
+
     const animationDuration = Math.round(distance / velocity);
 
-    console.log({ distance, velocity });
-
-    carElement.classList.remove('car-crashed');
-    carElement.setAttribute('style', `animation-duration: ${animationDuration}ms`);
-    carElement.classList.add('car-animate');
+    carIcon?.classList.remove('car-crashed');
+    carIcon?.setAttribute('style', `animation-duration: ${animationDuration}ms`);
+    carIcon?.classList.add('car-animate');
 
     const { success } = await driveCar(carId, this.driveController.signal);
 
     console.log('car finished:', success);
 
-    if (!success) carElement.classList.add('car-crashed');
+    if (!success) carIcon?.classList.add('car-crashed');
   }
 
-  async stopCar(carElement: HTMLElement, carId: number) {
+  async stopCar(carItem: HTMLLIElement, carId: number) {
+    const startBtn = carItem.querySelector('button.start');
+    const stopBtn = carItem.querySelector('button.stop');
+    const carIcon = carItem.querySelector('.car-icon');
+    stopBtn?.setAttribute('disabled', 'true');
+
+    carIcon?.classList.remove('car-animate');
+
     this.driveController.abort();
+
     await stopCarEngine(carId);
-    carElement.classList.remove('car-animate');
+    startBtn?.removeAttribute('disabled');
   }
 
   breakCar(carElement: HTMLElement) {
