@@ -33,6 +33,8 @@ export default class GarageView {
 
   private paginationEl: HTMLDivElement;
 
+  private winnerNameEl: HTMLHeadingElement;
+
   private driveController: AbortController;
 
   private page: number;
@@ -50,6 +52,8 @@ export default class GarageView {
     this.paginationEl = document.createElement('div');
     this.createCarEl = this.createInputField('create', false, this.createNewCar.bind(this));
     this.updateCarEl = this.createInputField('update', true, this.updateSelectedCar.bind(this));
+    this.winnerNameEl = document.createElement('h3');
+    this.winnerNameEl.classList.add('winner-name');
 
     this.carsListEl = document.createElement('ul');
 
@@ -316,7 +320,7 @@ export default class GarageView {
   }
 
   async resetRace() {
-    console.log('reset');
+    this.winnerNameEl.classList.remove('visible');
     const { cars } = await getAllCars(this.page);
     const carItems = cars.map(({ id }) => {
       const carItemEl: HTMLLIElement = this.carsListEl.querySelector(`[data-id="${id}"]`)!;
@@ -334,6 +338,11 @@ export default class GarageView {
   }
 
   async startRace() {
+    interface CarItem {
+      id: number;
+      name: string;
+      element: HTMLLIElement;
+    }
     const { cars } = await getAllCars(this.page);
 
     const carItems = cars.map(({ id, name }) => {
@@ -346,14 +355,20 @@ export default class GarageView {
     });
 
     const racePromises = carItems.map((car) => {
-      return new Promise(async (res) => {
+      return new Promise<CarItem | undefined>(async (res) => {
         const isCarFinished = await this.startCar(car.element, car.id);
-        if (isCarFinished) res('car won: ' + car.id);
+        if (isCarFinished) res(car);
       });
     });
 
-    const winningMessage = await Promise.race(racePromises);
-    console.log(winningMessage);
+    const winner = await Promise.race(racePromises);
+    if (winner) this.showRaceWinner(winner.name);
+  }
+
+  showRaceWinner(carName: string) {
+    this.winnerNameEl.textContent = `${carName} won! #{time}`;
+    this.winnerNameEl.classList.add('visible');
+    this.element.before(this.winnerNameEl);
   }
 
   async goToNextPage() {
