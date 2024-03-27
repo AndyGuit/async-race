@@ -1,6 +1,5 @@
 import './GarageView.css';
 import Button from '../../components/Button/Button';
-import Input from '../../components/Input/Input';
 import {
   createCar,
   deleteCar,
@@ -18,6 +17,7 @@ import { generateRandomCarName, generateRandomColor } from '../../utils/helperFu
 import { LIMIT_PER_PAGE } from '../../utils/globalVariables';
 import RaceControls from '../../components/RaceControls/RaceControls';
 import InputField from '../../components/InputField/InputField';
+import WinnerHeading from '../../components/WinnerHeading/WinnerHeading';
 
 export default class GarageView {
   private element: HTMLElement;
@@ -61,8 +61,7 @@ export default class GarageView {
       isDisabled: true,
       btnOnClick: this.updateSelectedCar.bind(this),
     });
-    this.winnerNameEl = document.createElement('h3');
-    this.winnerNameEl.classList.add('winner-name');
+    this.winnerNameEl = WinnerHeading();
 
     this.carsListEl = document.createElement('ul');
 
@@ -323,7 +322,7 @@ export default class GarageView {
   showRaceWinner(carName: string) {
     this.winnerNameEl.textContent = `${carName} won! #{time}`;
     this.winnerNameEl.classList.add('visible');
-    this.element.before(this.winnerNameEl);
+    this.element.append(this.winnerNameEl);
   }
 
   async goToNextPage() {
