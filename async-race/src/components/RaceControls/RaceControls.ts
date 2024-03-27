@@ -1,3 +1,4 @@
+import './RaceControls.css';
 import Button from '../Button/Button';
 
 interface Props {

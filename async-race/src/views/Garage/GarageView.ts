@@ -17,6 +17,7 @@ import { deleteWinner } from '../../api/WinnersApi';
 import { generateRandomCarName, generateRandomColor } from '../../utils/helperFunctions';
 import { LIMIT_PER_PAGE } from '../../utils/globalVariables';
 import RaceControls from '../../components/RaceControls/RaceControls';
+import InputField from '../../components/InputField/InputField';
 
 export default class GarageView {
   private element: HTMLElement;
@@ -50,8 +51,16 @@ export default class GarageView {
     this.garageH1El = document.createElement('h1');
     this.curPageEl = document.createElement('h2');
     this.paginationEl = document.createElement('div');
-    this.createCarEl = this.createInputField('create', false, this.createNewCar.bind(this));
-    this.updateCarEl = this.createInputField('update', true, this.updateSelectedCar.bind(this));
+    this.createCarEl = InputField({
+      btnText: 'create',
+      isDisabled: false,
+      btnOnClick: this.createNewCar.bind(this),
+    });
+    this.updateCarEl = InputField({
+      btnText: 'update',
+      isDisabled: true,
+      btnOnClick: this.updateSelectedCar.bind(this),
+    });
     this.winnerNameEl = document.createElement('h3');
     this.winnerNameEl.classList.add('winner-name');
 
@@ -72,37 +81,6 @@ export default class GarageView {
 
     wrapper.append(this.createCarEl, this.updateCarEl, carsControls);
     this.element.append(wrapper);
-  }
-
-  createInputField(btnText: string, isDisabled: boolean, btnOnClick: (e: MouseEvent) => void) {
-    const wrapper = document.createElement('div');
-    wrapper.classList.add('input-wrapper');
-
-    const input = Input({
-      type: 'text',
-      value: '',
-      classNames: 'input-text',
-      disabled: isDisabled,
-    });
-
-    const color = Input({
-      type: 'color',
-      value: '',
-      classNames: 'input-color',
-      disabled: isDisabled,
-    });
-
-    const btn = Button({
-      type: 'button',
-      classNames: 'secondary',
-      text: btnText,
-      disabled: isDisabled,
-      onClick: btnOnClick,
-    });
-
-    wrapper.append(input, color, btn);
-
-    return wrapper;
   }
 
   async createNewCar(e: MouseEvent) {

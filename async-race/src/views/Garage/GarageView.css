@@ -6,11 +6,6 @@
   margin-bottom: 3em;
 }
 
-.cars-controls {
-  display: flex;
-  gap: 1em;
-}
-
 .cars-list {
   display: flex;
   flex-direction: column;
