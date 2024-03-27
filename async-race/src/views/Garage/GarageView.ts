@@ -75,7 +75,12 @@ export default class GarageView {
       classNames: 'primary',
       onClick: this.startRace.bind(this),
     });
-    const resetBtn = Button({ text: 'reset', type: 'button', classNames: 'primary' });
+    const resetBtn = Button({
+      text: 'reset',
+      type: 'button',
+      classNames: 'primary',
+      onClick: this.resetRace.bind(this),
+    });
     const generateBtn = Button({
       text: 'generate cars',
       type: 'button',
@@ -308,6 +313,24 @@ export default class GarageView {
     await stopCarEngine(carId);
     carIcon?.classList.remove('car-animate');
     startBtn?.removeAttribute('disabled');
+  }
+
+  async resetRace() {
+    console.log('reset');
+    const { cars } = await getAllCars(this.page);
+    const carItems = cars.map(({ id }) => {
+      const carItemEl: HTMLLIElement = this.carsListEl.querySelector(`[data-id="${id}"]`)!;
+      return {
+        id,
+        element: carItemEl,
+      };
+    });
+
+    await Promise.all(
+      carItems.map(async (car) => {
+        await this.stopCar(car.element, car.id);
+      }),
+    );
   }
 
   async startRace() {
