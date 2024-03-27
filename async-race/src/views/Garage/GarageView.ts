@@ -1,7 +1,6 @@
 import './GarageView.css';
 import Button from '../../components/Button/Button';
 import Input from '../../components/Input/Input';
-// prettier-ignore
 import {
   createCar,
   deleteCar,
@@ -17,6 +16,7 @@ import { ICarResponseData } from '../../types/interfaces';
 import { deleteWinner } from '../../api/WinnersApi';
 import { generateRandomCarName, generateRandomColor } from '../../utils/helperFunctions';
 import { LIMIT_PER_PAGE } from '../../utils/globalVariables';
+import RaceControls from '../../components/RaceControls/RaceControls';
 
 export default class GarageView {
   private element: HTMLElement;
@@ -64,37 +64,14 @@ export default class GarageView {
     const wrapper = document.createElement('div');
     wrapper.classList.add('controls');
 
-    const carsControls = this.createCarsControls();
+    const carsControls = RaceControls({
+      onStart: this.startRace.bind(this),
+      onReset: this.resetRace.bind(this),
+      onGenerate: this.generateRandomCars.bind(this),
+    });
 
     wrapper.append(this.createCarEl, this.updateCarEl, carsControls);
     this.element.append(wrapper);
-  }
-
-  createCarsControls() {
-    const wrapper = document.createElement('div');
-    wrapper.classList.add('cars-controls');
-    const raceBtn = Button({
-      text: 'race',
-      type: 'button',
-      classNames: 'primary',
-      onClick: this.startRace.bind(this),
-    });
-    const resetBtn = Button({
-      text: 'reset',
-      type: 'button',
-      classNames: 'primary',
-      onClick: this.resetRace.bind(this),
-    });
-    const generateBtn = Button({
-      text: 'generate cars',
-      type: 'button',
-      classNames: 'secondary',
-      onClick: this.generateRandomCars.bind(this),
-    });
-
-    wrapper.append(raceBtn, resetBtn, generateBtn);
-
-    return wrapper;
   }
 
   createInputField(btnText: string, isDisabled: boolean, btnOnClick: (e: MouseEvent) => void) {
