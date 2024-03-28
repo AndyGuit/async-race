@@ -12,7 +12,7 @@ import {
 } from '../../api/CarsApi';
 import CarItem from '../../components/CarItem/CarItem';
 import { ICarResponseData } from '../../types/interfaces';
-import { deleteWinner } from '../../api/WinnersApi';
+import { createWinner, deleteWinner, getWinner, updateWinner } from '../../api/WinnersApi';
 import { generateRandomCarName, generateRandomColor } from '../../utils/helperFunctions';
 import { LIMIT_CARS_PER_PAGE } from '../../utils/globalVariables';
 import RaceControls from '../../components/RaceControls/RaceControls';
@@ -40,11 +40,14 @@ export default class GarageView {
 
   private page: number;
 
+  private winnerTime: number;
+
   constructor() {
     this.element = document.createElement('div');
     this.element.classList.add('garage-wrapper');
 
     this.page = 1;
+    this.winnerTime = 0;
 
     this.driveController = new AbortController();
 
@@ -248,15 +251,20 @@ export default class GarageView {
 
     stopBtn?.removeAttribute('disabled');
 
-    const animationDuration = Math.round(distance / velocity);
+    const animationDuration = (distance / velocity / 1000).toFixed(2);
+
+    // console.log('anim dur: ', animationDuration);
+    // console.log('anim dur in seconds: ', );
 
     carIcon?.classList.remove('car-crashed');
-    carIcon?.setAttribute('style', `animation-duration: ${animationDuration}ms`);
+    carIcon?.setAttribute('style', `animation-duration: ${animationDuration}s`);
     carIcon?.classList.add('car-animate');
 
     const { success } = await driveCar(carId, this.driveController.signal);
 
     if (!success) carIcon?.classList.add('car-crashed');
+    if (success && !this.winnerTime) this.winnerTime = Number(animationDuration);
+
     return success;
   }
 
@@ -274,6 +282,7 @@ export default class GarageView {
   }
 
   async resetRace() {
+    this.winnerTime = 0;
     this.winnerNameEl.classList.remove('visible');
     const { cars } = await getAllCars(this.page);
     const carItems = cars.map(({ id }) => {
@@ -319,12 +328,22 @@ export default class GarageView {
       })
     ));
 
-    const winner = await Promise.race(racePromises);
-    if (winner) this.showRaceWinner(winner.name);
+    const raceWinner = await Promise.race(racePromises);
+    if (raceWinner) {
+      this.showRaceWinner(raceWinner.name);
+      const { wins } = await getWinner(raceWinner.id);
+      const { id } = raceWinner;
+
+      if (wins) {
+        await updateWinner({ id, wins: wins + 1, time: this.winnerTime });
+      } else {
+        await createWinner({ id, wins: 1, time: this.winnerTime });
+      }
+    }
   }
 
   showRaceWinner(carName: string) {
-    this.winnerNameEl.textContent = `${carName} won! #{time}`;
+    this.winnerNameEl.textContent = `${carName} won! (${this.winnerTime}s)`;
     this.winnerNameEl.classList.add('visible');
     this.element.append(this.winnerNameEl);
   }
