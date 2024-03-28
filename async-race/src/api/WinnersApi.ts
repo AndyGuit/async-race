@@ -1,8 +1,11 @@
-import { IWinnerData, IWinnersParams } from '../types/interfaces';
-import { API_URL } from '../utils/globalVariables';
+import { IWinnerData, IWinnersParams, IWinnersResponseData } from '../types/interfaces';
+import { API_URL, LIMIT_WINNERS_PER_PAGE } from '../utils/globalVariables';
 
-export async function getAllWinners(params?: IWinnersParams): Promise<IWinnerData[]> {
-  let url = `${API_URL}/winners`;
+export async function getAllWinners(
+  page: number,
+  params?: IWinnersParams,
+): Promise<IWinnersResponseData> {
+  let url = `${API_URL}/winners?_page=${page}&_limit${LIMIT_WINNERS_PER_PAGE}`;
 
   if (params) {
     const keys = Object.keys(params) as (keyof IWinnersParams)[];
@@ -13,9 +16,11 @@ export async function getAllWinners(params?: IWinnersParams): Promise<IWinnerDat
   }
 
   const res = await fetch(url);
-  const data = res.json();
+  const totalCount = Number(res.headers.get('X-Total-Count'));
 
-  return data;
+  const data: IWinnerData[] = await res.json();
+
+  return { totalWinners: totalCount, winners: data };
 }
 
 export async function getWinner(id: number): Promise<IWinnerData> {

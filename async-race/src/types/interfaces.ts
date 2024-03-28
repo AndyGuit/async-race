@@ -30,6 +30,11 @@ export interface IWinnerData {
   time: number;
 }
 
+export interface IWinnersResponseData {
+  totalWinners: number;
+  winners: Array<IWinnerData>;
+}
+
 export interface IWinnerRowData extends IWinnerData, ICarData {
   number: number;
 }
