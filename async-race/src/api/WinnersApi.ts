@@ -5,13 +5,13 @@ export async function getAllWinners(
   page: number,
   params?: IWinnersParams,
 ): Promise<IWinnersResponseData> {
-  let url = `${API_URL}/winners?_page=${page}&_limit${LIMIT_WINNERS_PER_PAGE}`;
+  let url = `${API_URL}/winners?_page=${page}&_limit=${LIMIT_WINNERS_PER_PAGE}`;
 
   if (params) {
     const keys = Object.keys(params) as (keyof IWinnersParams)[];
     keys.forEach((key, i) => {
-      const paramSymbol = i === 0 ? '?' : '&';
-      url += `${paramSymbol}_${key}=${params[key]}`;
+      // const paramSymbol = i === 0 ? '?' : '&';
+      url += `&_${key}=${params[key]}`;
     });
   }
 

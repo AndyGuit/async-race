@@ -17,9 +17,12 @@ export interface IAllCarsResponseData {
   cars: Array<ICarResponseData>;
 }
 
-export interface IWinnersParams {
+export interface IWinnersParams extends ISortParams {
   page?: number;
   limit?: number;
+}
+
+export interface ISortParams {
   sort?: 'id' | 'wins' | 'time';
   order?: 'ASC' | 'DESC';
 }

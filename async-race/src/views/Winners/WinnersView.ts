@@ -3,7 +3,7 @@ import { getAllWinners } from '../../api/WinnersApi';
 import Pagination from '../../components/Pagination/Pagination';
 import WinnerRow from '../../components/WinnerRow/WinnerRow';
 import WinnersTable from '../../components/WinnersTable/WinnersTable';
-import { IWinnerRowData } from '../../types/interfaces';
+import { ISortParams, IWinnerRowData } from '../../types/interfaces';
 import { LIMIT_WINNERS_PER_PAGE } from '../../utils/globalVariables';
 
 export default class WinnersView {
@@ -14,6 +14,11 @@ export default class WinnersView {
   private pageHeading: HTMLHeadingElement;
 
   private winnersTBody: HTMLTableSectionElement;
+
+  private sortParams: {
+    sort?: 'id' | 'wins' | 'time';
+    order?: 'ASC' | 'DESC';
+  };
 
   private page: number;
 
@@ -26,6 +31,8 @@ export default class WinnersView {
     this.pageHeading = document.createElement('h1');
 
     this.page = 1;
+
+    this.sortParams = {};
 
     this.pagination = null;
 
@@ -50,7 +57,7 @@ export default class WinnersView {
 
   async goToNextPage() {
     this.page += 1;
-    const { totalWinners, winners } = await getAllWinners(this.page);
+    const { totalWinners, winners } = await getAllWinners(this.page, this.sortParams);
     const cars = await Promise.all(winners.map(({ id }) => getCar(id)));
 
     const winnersData = winners.map((winner, i) => ({ ...winner, ...cars[i], number: i }));
@@ -63,7 +70,7 @@ export default class WinnersView {
 
   async goToPrevPage() {
     this.page -= 1;
-    const { totalWinners, winners } = await getAllWinners(this.page);
+    const { totalWinners, winners } = await getAllWinners(this.page, this.sortParams);
     const cars = await Promise.all(winners.map(({ id }) => getCar(id)));
 
     const winnersData = winners.map((winner, i) => ({ ...winner, ...cars[i], number: i }));
@@ -72,6 +79,23 @@ export default class WinnersView {
     this.renderTableElements(winnersData);
 
     console.log('prev winner');
+  }
+
+  async sortWinners(e: MouseEvent) {
+    const element = e.target as HTMLTableCellElement;
+
+    if (element.hasAttribute('data-sort')) {
+      this.sortParams.order = this.sortParams.order === 'ASC' ? 'DESC' : 'ASC';
+      const sortBy = element.getAttribute('data-sort') as ISortParams['sort'];
+      this.sortParams.sort = sortBy;
+
+      const { winners } = await getAllWinners(this.page, this.sortParams);
+      const cars = await Promise.all(winners.map(({ id }) => getCar(id)));
+
+      const winnersData = winners.map((winner, i) => ({ ...winner, ...cars[i], number: i }));
+
+      this.renderTableElements(winnersData);
+    }
   }
 
   renderPagination(totalWinners: number) {
@@ -91,7 +115,8 @@ export default class WinnersView {
   }
 
   async init() {
-    const { totalWinners, winners } = await getAllWinners(this.page);
+    console.log('sort params', this.sortParams);
+    const { totalWinners, winners } = await getAllWinners(this.page, this.sortParams);
     const cars = await Promise.all(winners.map(({ id }) => getCar(id)));
 
     const winnersData = winners.map((winner, i) => ({ ...winner, ...cars[i], number: i }));
@@ -109,7 +134,7 @@ export default class WinnersView {
 
     this.pageHeading.after(this.pagination);
 
-    this.element.append(WinnersTable(this.winnersTBody));
+    this.element.append(WinnersTable(this.winnersTBody, this.sortWinners.bind(this)));
 
     this.renderTableElements(winnersData);
   }
