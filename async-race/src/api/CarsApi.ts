@@ -28,7 +28,7 @@ export async function getCar(carId: number): Promise<ICarResponseData> {
   return data;
 }
 
-export async function createCar(carData: ICarData) {
+export async function createCar(carData: ICarData): Promise<ICarResponseData> {
   const res = await fetch(`${API_URL}/garage`, {
     method: 'POST',
     headers: {
@@ -42,7 +42,7 @@ export async function createCar(carData: ICarData) {
   return data;
 }
 
-export async function deleteCar(carId: number) {
+export async function deleteCar(carId: number): Promise<{}> {
   /* TODO: trycatch */
   const res = await fetch(`${API_URL}/garage/${carId}`, {
     method: 'DELETE',
@@ -56,7 +56,7 @@ export async function deleteCar(carId: number) {
   return data;
 }
 
-export async function updateCar(carId: number, carData: ICarData) {
+export async function updateCar(carId: number, carData: ICarData): Promise<ICarResponseData> {
   /* TODO: trycatch */
   const res = await fetch(`${API_URL}/garage/${carId}`, {
     method: 'PUT',
