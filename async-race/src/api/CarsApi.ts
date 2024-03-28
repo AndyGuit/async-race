@@ -4,10 +4,10 @@ import {
   ICarResponseData,
   ICarEngineResponse,
 } from '../types/interfaces';
-import { API_URL, LIMIT_PER_PAGE } from '../utils/globalVariables';
+import { API_URL, LIMIT_CARS_PER_PAGE } from '../utils/globalVariables';
 
 export async function getAllCars(page: number): Promise<IAllCarsResponseData> {
-  const query = `_page=${page}&_limit=${LIMIT_PER_PAGE}`;
+  const query = `_page=${page}&_limit=${LIMIT_CARS_PER_PAGE}`;
   const res = await fetch(`${API_URL}/garage?${query}`);
 
   const totalCount = Number(res.headers.get('X-Total-Count'));

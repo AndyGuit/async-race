@@ -1,7 +1,7 @@
 import { IWinnerData, IWinnersParams } from '../types/interfaces';
 import { API_URL } from '../utils/globalVariables';
 
-export async function getAllWinners(params?: IWinnersParams) {
+export async function getAllWinners(params?: IWinnersParams): Promise<IWinnerData[]> {
   let url = `${API_URL}/winners`;
 
   if (params) {
@@ -18,7 +18,7 @@ export async function getAllWinners(params?: IWinnersParams) {
   return data;
 }
 
-export async function getWinner(id: number) {
+export async function getWinner(id: number): Promise<IWinnerData> {
   /* TODO: trycatch */
   const res = await fetch(`${API_URL}/winners/${id}`);
   const data = await res.json();
@@ -26,7 +26,7 @@ export async function getWinner(id: number) {
   return data;
 }
 
-export async function createWinner(winnerData: IWinnerData) {
+export async function createWinner(winnerData: IWinnerData): Promise<IWinnerData> {
   /* TODO: trycatch */
   const res = await fetch(`${API_URL}/winners`, {
     method: 'POST',
@@ -56,7 +56,7 @@ export async function deleteWinner(id: number): Promise<IWinnerData | null> {
   return null;
 }
 
-export async function updateWinner(winnerData: IWinnerData) {
+export async function updateWinner(winnerData: IWinnerData): Promise<IWinnerData> {
   /* TODO: trycatch */
   const { id, time, wins } = winnerData;
   const res = await fetch(`${API_URL}/winners/${id}`, {

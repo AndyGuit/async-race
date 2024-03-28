@@ -14,7 +14,7 @@ import CarItem from '../../components/CarItem/CarItem';
 import { ICarResponseData } from '../../types/interfaces';
 import { deleteWinner } from '../../api/WinnersApi';
 import { generateRandomCarName, generateRandomColor } from '../../utils/helperFunctions';
-import { LIMIT_PER_PAGE } from '../../utils/globalVariables';
+import { LIMIT_CARS_PER_PAGE } from '../../utils/globalVariables';
 import RaceControls from '../../components/RaceControls/RaceControls';
 import InputField from '../../components/InputField/InputField';
 import WinnerHeading from '../../components/WinnerHeading/WinnerHeading';
@@ -354,7 +354,7 @@ export default class GarageView {
   }
 
   renderPagination(totalCars: number) {
-    const numOfPages = Math.ceil(totalCars / LIMIT_PER_PAGE);
+    const numOfPages = Math.ceil(totalCars / LIMIT_CARS_PER_PAGE);
 
     this.paginationEl.classList.add('pagination');
 

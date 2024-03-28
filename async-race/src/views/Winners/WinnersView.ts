@@ -1,7 +1,8 @@
-import './WinnersView.css';
+import { getCar } from '../../api/CarsApi';
 import { getAllWinners } from '../../api/WinnersApi';
 import WinnerRow from '../../components/WinnerRow/WinnerRow';
 import WinnersTable from '../../components/WinnersTable/WinnersTable';
+import { IWinnerRowData } from '../../types/interfaces';
 
 export default class WinnersView {
   private element: HTMLElement;
@@ -37,24 +38,19 @@ export default class WinnersView {
     this.element.append(tableEl);
   }
 
-  renderWinners() {
-    const winner = WinnerRow({
-      color: '#ffffff',
-      id: 1,
-      name: 'Tesla',
-      number: 1,
-      time: 100,
-      wins: 1,
-    });
-
-    this.winnersTBody.append(winner);
-  }
-
   async init() {
     const winners = await getAllWinners();
+    const cars = await Promise.all(winners.map(({ id }) => getCar(id)));
 
-    this.renderHeadings(winners.length);
+    const winnersData = winners.map((winner, i) => ({ ...winner, ...cars[i] }));
+
+    this.renderHeadings(winnersData.length);
     this.renderTable();
-    this.renderWinners();
+
+    this.winnersTBody.append(
+      ...winnersData.map((winner, i) => {
+        return WinnerRow({ ...winner, number: i + 1 });
+      }),
+    );
   }
 }

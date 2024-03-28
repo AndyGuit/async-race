@@ -1,3 +1,5 @@
+import './WinnersTable.css';
+
 export default function WinnersTable(bodyEl: HTMLTableSectionElement) {
   const tableHeadRows = ['Number', 'Car', 'Name', 'Wins', 'Best time (seconds)'];
 
