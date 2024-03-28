@@ -2,7 +2,6 @@ import { getCar } from '../../api/CarsApi';
 import { getAllWinners } from '../../api/WinnersApi';
 import WinnerRow from '../../components/WinnerRow/WinnerRow';
 import WinnersTable from '../../components/WinnersTable/WinnersTable';
-import { IWinnerRowData } from '../../types/interfaces';
 
 export default class WinnersView {
   private element: HTMLElement;
@@ -48,9 +47,7 @@ export default class WinnersView {
     this.renderTable();
 
     this.winnersTBody.append(
-      ...winnersData.map((winner, i) => {
-        return WinnerRow({ ...winner, number: i + 1 });
-      }),
+      ...winnersData.map((winner, i) => WinnerRow({ ...winner, number: i + 1 })),
     );
   }
 }

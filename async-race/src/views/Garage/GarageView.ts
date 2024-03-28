@@ -308,12 +308,16 @@ export default class GarageView {
       };
     });
 
-    const racePromises = carItems.map((car) => {
-      return new Promise<CarItem | undefined>(async (res) => {
-        const isCarFinished = await this.startCar(car.element, car.id);
-        if (isCarFinished) res(car);
-      });
-    });
+    // prettier-ignore
+    const racePromises = carItems.map((car) => (
+      new Promise<CarItem | undefined>((res) => {
+        this.startCar(car.element, car.id).then((isCarFinished) => {
+          if (isCarFinished) {
+            res(car);
+          }
+        });
+      })
+    ));
 
     const winner = await Promise.race(racePromises);
     if (winner) this.showRaceWinner(winner.name);
