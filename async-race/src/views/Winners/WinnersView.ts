@@ -11,6 +11,8 @@ export default class WinnersView {
 
   private pagination: HTMLElement | null;
 
+  private pageHeading: HTMLHeadingElement;
+
   private winnersTBody: HTMLTableSectionElement;
 
   private page: number;
@@ -20,6 +22,8 @@ export default class WinnersView {
     this.element.classList.add('winners-wrapper');
 
     this.winnersTBody = document.createElement('tbody');
+
+    this.pageHeading = document.createElement('h1');
 
     this.page = 1;
 
@@ -32,11 +36,8 @@ export default class WinnersView {
     return this.element;
   }
 
-  renderHeadings(numOfWinners: number) {
-    const h1 = document.createElement('h1');
-    h1.textContent = `Winners (${numOfWinners})`;
-
-    this.element.append(h1);
+  setHeadingTextContent(numOfWinners: number) {
+    this.pageHeading.textContent = `Winners (${numOfWinners})`;
   }
 
   renderTableElements(winnersData: IWinnerRowData[]) {
@@ -47,23 +48,66 @@ export default class WinnersView {
     );
   }
 
+  async goToNextPage() {
+    this.page += 1;
+    const { totalWinners, winners } = await getAllWinners(this.page);
+    const cars = await Promise.all(winners.map(({ id }) => getCar(id)));
+
+    const winnersData = winners.map((winner, i) => ({ ...winner, ...cars[i], number: i }));
+
+    this.renderPagination(totalWinners);
+    this.renderTableElements(winnersData);
+
+    console.log('next winner');
+  }
+
+  async goToPrevPage() {
+    this.page -= 1;
+    const { totalWinners, winners } = await getAllWinners(this.page);
+    const cars = await Promise.all(winners.map(({ id }) => getCar(id)));
+
+    const winnersData = winners.map((winner, i) => ({ ...winner, ...cars[i], number: i }));
+
+    this.renderPagination(totalWinners);
+    this.renderTableElements(winnersData);
+
+    console.log('prev winner');
+  }
+
+  renderPagination(totalWinners: number) {
+    if (this.pagination) {
+      this.pagination.remove();
+
+      this.pagination = Pagination({
+        numOfItems: totalWinners,
+        curPage: this.page,
+        limitPerPage: LIMIT_WINNERS_PER_PAGE,
+        handleNextPage: this.goToNextPage.bind(this),
+        handlePrevPage: this.goToPrevPage.bind(this),
+      });
+
+      this.pageHeading.after(this.pagination);
+    }
+  }
+
   async init() {
     const { totalWinners, winners } = await getAllWinners(this.page);
     const cars = await Promise.all(winners.map(({ id }) => getCar(id)));
 
     const winnersData = winners.map((winner, i) => ({ ...winner, ...cars[i], number: i }));
 
-    this.renderHeadings(totalWinners);
+    this.element.append(this.pageHeading);
+    this.setHeadingTextContent(totalWinners);
 
     this.pagination = Pagination({
       numOfItems: totalWinners,
       curPage: this.page,
       limitPerPage: LIMIT_WINNERS_PER_PAGE,
-      handleNextPage: () => {},
-      handlePrevPage: () => {},
+      handleNextPage: this.goToNextPage.bind(this),
+      handlePrevPage: this.goToPrevPage.bind(this),
     });
 
-    this.element.append(this.pagination);
+    this.pageHeading.after(this.pagination);
 
     this.element.append(WinnersTable(this.winnersTBody));
 
