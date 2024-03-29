@@ -193,7 +193,7 @@ export default class GarageView {
 
   async deleteSelectedCar(carId: number) {
     await deleteCar(carId);
-    const isWinnerRemoved = await deleteWinner(carId);
+    await deleteWinner(carId);
 
     const { cars, totalCars } = await getAllCars(this.page);
 
@@ -204,10 +204,6 @@ export default class GarageView {
     this.renderPagination(totalCars);
     this.changeHeadingsTextContent(totalCars);
     this.renderCarsList(cars);
-
-    if (isWinnerRemoved) {
-      // re render winners table
-    }
   }
 
   addCarListListener() {
@@ -275,6 +271,7 @@ export default class GarageView {
 
     await stopCarEngine(carId);
     carIcon?.classList.remove('car-animate');
+    carIcon?.classList.remove('car-crashed');
     startBtn?.removeAttribute('disabled');
   }
 
