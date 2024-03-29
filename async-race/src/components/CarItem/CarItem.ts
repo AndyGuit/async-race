@@ -3,6 +3,7 @@ import './CarItem.css';
 import Button from '../Button/Button';
 import CarIcon from '../CarIcon/CarIcon';
 import FlagIcon from '../FlagIcon/FlagIcon';
+import FireAnimation from '../FireAnimation/FireAnimation';
 
 interface Props {
   name: string;
@@ -43,6 +44,7 @@ export default function CarItem(props: Props) {
     disabled: true,
   });
   const carIcon = CarIcon(props.color);
+  carIcon.append(FireAnimation());
   const flagIcon = FlagIcon();
 
   controlBtnsWrapper.classList.add('car-item__controls');

@@ -48,6 +48,10 @@
   animation-play-state: paused;
 }
 
+.car-crashed .fire-container {
+  display: block;
+}
+
 @keyframes car-drive {
   from {
     left: 120px;
