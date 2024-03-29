@@ -46,3 +46,9 @@ export interface ICarEngineResponse {
   velocity: number;
   distance: number;
 }
+
+export interface ICarItemElement {
+  id: number;
+  name: string;
+  element: HTMLLIElement;
+}

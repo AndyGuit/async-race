@@ -11,7 +11,7 @@ import {
   updateCar,
 } from '../../api/CarsApi';
 import CarItem from '../../components/CarItem/CarItem';
-import { ICarResponseData } from '../../types/interfaces';
+import { ICarItemElement, ICarResponseData } from '../../types/interfaces';
 import { createWinner, deleteWinner, getWinner, updateWinner } from '../../api/WinnersApi';
 import { generateRandomCarName, generateRandomColor } from '../../utils/helperFunctions';
 import { LIMIT_CARS_PER_PAGE } from '../../utils/globalVariables';
@@ -295,11 +295,6 @@ export default class GarageView {
   }
 
   async startRace() {
-    interface CarItem {
-      id: number;
-      name: string;
-      element: HTMLLIElement;
-    }
     const { cars } = await getAllCars(this.page);
 
     const carItems = cars.map(({ id, name }) => {
@@ -313,7 +308,7 @@ export default class GarageView {
 
     // prettier-ignore
     const racePromises = carItems.map((car) => (
-      new Promise<CarItem | undefined>((res) => {
+      new Promise<ICarItemElement | undefined>((res) => {
         this.startCar(car.element, car.id).then((isCarFinished) => {
           if (isCarFinished) {
             res(car);
