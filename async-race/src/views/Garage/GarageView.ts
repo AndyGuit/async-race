@@ -253,9 +253,6 @@ export default class GarageView {
 
     const animationDuration = (distance / velocity / 1000).toFixed(2);
 
-    // console.log('anim dur: ', animationDuration);
-    // console.log('anim dur in seconds: ', );
-
     carIcon?.classList.remove('car-crashed');
     carIcon?.setAttribute('style', `animation-duration: ${animationDuration}s`);
     carIcon?.classList.add('car-animate');

@@ -9,5 +9,13 @@
   & th {
     cursor: pointer;
     padding: 5px 10px;
+
+    &.sort-ASC::after {
+      content: '\2191';
+    }
+
+    &.sort-DESC::after {
+      content: '\2193';
+    }
   }
 }

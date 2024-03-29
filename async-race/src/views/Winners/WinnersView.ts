@@ -64,8 +64,6 @@ export default class WinnersView {
 
     this.renderPagination(totalWinners);
     this.renderTableElements(winnersData);
-
-    console.log('next winner');
   }
 
   async goToPrevPage() {
@@ -77,8 +75,6 @@ export default class WinnersView {
 
     this.renderPagination(totalWinners);
     this.renderTableElements(winnersData);
-
-    console.log('prev winner');
   }
 
   async sortWinners(e: MouseEvent) {
@@ -86,7 +82,19 @@ export default class WinnersView {
 
     if (element.hasAttribute('data-sort')) {
       this.sortParams.order = this.sortParams.order === 'ASC' ? 'DESC' : 'ASC';
+
       const sortBy = element.getAttribute('data-sort') as ISortParams['sort'];
+
+      if (sortBy === 'time') {
+        const winsEl = element.previousElementSibling as HTMLTableCellElement;
+        winsEl.className = '';
+      } else {
+        const timeEl = element.nextElementSibling as HTMLTableCellElement;
+        timeEl.className = '';
+      }
+
+      element.className = `sort-${this.sortParams.order}`;
+
       this.sortParams.sort = sortBy;
 
       const { winners } = await getAllWinners(this.page, this.sortParams);
@@ -115,7 +123,6 @@ export default class WinnersView {
   }
 
   async init() {
-    console.log('sort params', this.sortParams);
     const { totalWinners, winners } = await getAllWinners(this.page, this.sortParams);
     const cars = await Promise.all(winners.map(({ id }) => getCar(id)));
 
