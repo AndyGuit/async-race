@@ -44,6 +44,8 @@ export default class MainView {
   renderWinnersView() {
     this.destroyChildren();
 
+    this.winnersView.init();
+
     this.children.push(this.winnersView.getElement());
 
     this.element.append(this.winnersView.getElement());

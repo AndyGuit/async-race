@@ -123,6 +123,7 @@ export default class WinnersView {
   }
 
   async init() {
+    this.element.innerHTML = '';
     const { totalWinners, winners } = await getAllWinners(this.page, this.sortParams);
     const cars = await Promise.all(winners.map(({ id }) => getCar(id)));
 
