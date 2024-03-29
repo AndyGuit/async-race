@@ -18,6 +18,7 @@ import { LIMIT_CARS_PER_PAGE } from '../../utils/globalVariables';
 import RaceControls from '../../components/RaceControls/RaceControls';
 import InputField from '../../components/InputField/InputField';
 import WinnerHeading from '../../components/WinnerHeading/WinnerHeading';
+import CarDriveState from '../../store/CarDriveState';
 
 export default class GarageView {
   private element: HTMLElement;
@@ -37,6 +38,10 @@ export default class GarageView {
   private winnerNameEl: HTMLHeadingElement;
 
   private driveController: AbortController;
+
+  private carsDriveStates: {
+    [key: number]: CarDriveState;
+  };
 
   private page: number;
 
@@ -65,6 +70,8 @@ export default class GarageView {
       btnOnClick: this.updateSelectedCar.bind(this),
     });
     this.winnerNameEl = WinnerHeading();
+
+    this.carsDriveStates = {};
 
     this.carsListEl = document.createElement('ul');
 
@@ -238,7 +245,7 @@ export default class GarageView {
   async startCar(carItem: HTMLLIElement, carId: number) {
     const startBtn = carItem.querySelector('button.start');
     const stopBtn = carItem.querySelector('button.stop');
-    const carIcon = carItem.querySelector('.car-icon');
+    const carIcon: HTMLElement = carItem.querySelector('.car-icon')!;
 
     startBtn?.setAttribute('disabled', 'true');
 
@@ -247,16 +254,22 @@ export default class GarageView {
 
     stopBtn?.removeAttribute('disabled');
 
-    const animationDuration = (distance / velocity / 1000).toFixed(2);
+    const timeToFinish = Math.ceil(distance / velocity) / 1000;
+    this.carsDriveStates[carId] = new CarDriveState(timeToFinish, carIcon);
+    this.carsDriveStates[carId].animateCarMovement();
 
-    carIcon?.classList.remove('car-crashed');
-    carIcon?.setAttribute('style', `animation-duration: ${animationDuration}s`);
-    carIcon?.classList.add('car-animate');
+    const { success } = await driveCar(carId, this.carsDriveStates[carId].driveController.signal);
 
-    const { success } = await driveCar(carId, this.driveController.signal);
+    const isStoppedByUser = this.carsDriveStates[carId].driveController.signal.aborted;
 
-    if (!success) carIcon?.classList.add('car-crashed');
-    if (success && !this.winnerTime) this.winnerTime = Number(animationDuration);
+    if (!success) {
+      this.carsDriveStates[carId].stopCar();
+
+      if (!isStoppedByUser) {
+        carIcon?.classList.add('car-crashed');
+      }
+    }
+    if (success && !this.winnerTime) this.winnerTime = Number(timeToFinish.toFixed(2));
 
     return success;
   }
@@ -267,10 +280,10 @@ export default class GarageView {
     const carIcon = carItem.querySelector('.car-icon');
     stopBtn?.setAttribute('disabled', 'true');
 
-    this.driveController.abort();
+    this.carsDriveStates[carId].driveController.abort();
 
     await stopCarEngine(carId);
-    carIcon?.classList.remove('car-animate');
+    carIcon?.removeAttribute('style');
     carIcon?.classList.remove('car-crashed');
     startBtn?.removeAttribute('disabled');
   }
@@ -338,6 +351,7 @@ export default class GarageView {
   }
 
   async goToNextPage() {
+    this.carsDriveStates = {};
     this.page += 1;
     const { cars, totalCars } = await getAllCars(this.page);
     this.changeHeadingsTextContent(totalCars);
@@ -352,6 +366,7 @@ export default class GarageView {
   }
 
   async goToPrevPage() {
+    this.carsDriveStates = {};
     this.page -= 1;
     const { cars, totalCars } = await getAllCars(this.page);
     this.changeHeadingsTextContent(totalCars);
