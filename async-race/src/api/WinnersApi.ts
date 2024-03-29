@@ -9,8 +9,7 @@ export async function getAllWinners(
 
   if (params) {
     const keys = Object.keys(params) as (keyof IWinnersParams)[];
-    keys.forEach((key, i) => {
-      // const paramSymbol = i === 0 ? '?' : '&';
+    keys.forEach((key) => {
       url += `&_${key}=${params[key]}`;
     });
   }

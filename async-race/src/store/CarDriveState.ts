@@ -24,7 +24,7 @@ export default class CarDriveState {
 
     const moveCar = () => {
       startPos += step;
-      this.carIcon.style.left = startPos + 'px';
+      this.carIcon.style.left = `${startPos}px`;
       if (startPos < distance && !this.isStopped) requestAnimationFrame(moveCar);
     };
 

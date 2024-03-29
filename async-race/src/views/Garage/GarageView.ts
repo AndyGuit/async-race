@@ -12,7 +12,10 @@ import {
 } from '../../api/CarsApi';
 import CarItem from '../../components/CarItem/CarItem';
 import { ICarItemElement, ICarResponseData } from '../../types/interfaces';
-import { createWinner, deleteWinner, getWinner, updateWinner } from '../../api/WinnersApi';
+// prettier-ignore
+import {
+  createWinner, deleteWinner, getWinner, updateWinner,
+} from '../../api/WinnersApi';
 import { generateRandomCarName, generateRandomColor } from '../../utils/helperFunctions';
 import { LIMIT_CARS_PER_PAGE } from '../../utils/globalVariables';
 import RaceControls from '../../components/RaceControls/RaceControls';
@@ -37,8 +40,6 @@ export default class GarageView {
 
   private winnerNameEl: HTMLHeadingElement;
 
-  private driveController: AbortController;
-
   private carsDriveStates: {
     [key: number]: CarDriveState;
   };
@@ -53,8 +54,6 @@ export default class GarageView {
 
     this.page = 1;
     this.winnerTime = 0;
-
-    this.driveController = new AbortController();
 
     this.garageH1El = document.createElement('h1');
     this.curPageEl = document.createElement('h2');
@@ -249,7 +248,6 @@ export default class GarageView {
 
     startBtn?.setAttribute('disabled', 'true');
 
-    this.driveController = new AbortController();
     const { distance, velocity } = await startCarEngine(carId);
 
     stopBtn?.removeAttribute('disabled');
