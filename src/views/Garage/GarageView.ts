@@ -22,6 +22,8 @@ import RaceControls from '../../components/RaceControls/RaceControls';
 import InputField from '../../components/InputField/InputField';
 import WinnerHeading from '../../components/WinnerHeading/WinnerHeading';
 import CarDriveState from '../../store/CarDriveState';
+import Loader from '../../components/Loader/Loader';
+import Overlay from '../../components/Overlay/Overlay';
 
 export default class GarageView {
   private element: HTMLElement;
