@@ -1,5 +1,7 @@
 import { getCar } from '../../api/CarsApi';
 import { getAllWinners } from '../../api/WinnersApi';
+import Loader from '../../components/Loader/Loader';
+import Overlay from '../../components/Overlay/Overlay';
 import Pagination from '../../components/Pagination/Pagination';
 import WinnerRow from '../../components/WinnerRow/WinnerRow';
 import WinnersTable from '../../components/WinnersTable/WinnersTable';
@@ -14,6 +16,10 @@ export default class WinnersView {
   private pageHeading: HTMLHeadingElement;
 
   private winnersTBody: HTMLTableSectionElement;
+
+  private loaderElement: HTMLDivElement;
+
+  private overlayElement: HTMLDivElement;
 
   private sortParams: {
     sort?: 'id' | 'wins' | 'time';
@@ -35,6 +41,14 @@ export default class WinnersView {
     this.sortParams = {};
 
     this.pagination = null;
+
+    this.loaderElement = Loader();
+    this.overlayElement = Overlay();
+
+    this.overlayElement.append(this.loaderElement);
+    this.overlayElement.classList.add('hidden');
+
+    document.body.append(this.overlayElement);
 
     this.init();
   }
@@ -122,10 +136,20 @@ export default class WinnersView {
     }
   }
 
+  showLoading() {
+    this.overlayElement.classList.remove('hidden');
+  }
+
+  hideLoading() {
+    this.overlayElement.classList.add('hidden');
+  }
+
   async init() {
+    this.showLoading();
     this.element.innerHTML = '';
     const { totalWinners, winners } = await getAllWinners(this.page, this.sortParams);
     const cars = await Promise.all(winners.map(({ id }) => getCar(id)));
+    this.hideLoading();
 
     const winnersData = winners.map((winner, i) => ({ ...winner, ...cars[i], number: i }));
 

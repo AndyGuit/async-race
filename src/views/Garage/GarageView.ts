@@ -42,6 +42,10 @@ export default class GarageView {
 
   private winnerNameEl: HTMLHeadingElement;
 
+  private loaderElement: HTMLDivElement;
+
+  private overlayElement: HTMLDivElement;
+
   private carsDriveStates: {
     [key: number]: CarDriveState;
   };
@@ -76,6 +80,14 @@ export default class GarageView {
 
     this.carsListEl = document.createElement('ul');
 
+    this.loaderElement = Loader();
+    this.overlayElement = Overlay();
+
+    this.overlayElement.append(this.loaderElement);
+    this.overlayElement.classList.add('hidden');
+
+    document.body.append(this.overlayElement);
+
     this.init();
   }
 
@@ -93,15 +105,26 @@ export default class GarageView {
     this.element.append(wrapper);
   }
 
+  showLoading() {
+    this.overlayElement.classList.remove('hidden');
+  }
+
+  hideLoading() {
+    this.overlayElement.classList.add('hidden');
+  }
+
   async createNewCar(e: MouseEvent) {
     const button = e.target as HTMLButtonElement;
     const colorInput = button.previousElementSibling as HTMLInputElement;
     const nameInput = colorInput?.previousElementSibling as HTMLInputElement;
 
     if (colorInput && nameInput) {
+      this.showLoading();
       await createCar({ color: colorInput.value, name: nameInput.value });
 
       const { totalCars, cars } = await getAllCars(this.page);
+
+      this.hideLoading();
 
       this.changeHeadingsTextContent(totalCars);
 
@@ -145,6 +168,7 @@ export default class GarageView {
       color: generateRandomColor(),
     }));
 
+    this.showLoading();
     await Promise.all(
       carsArr.map(async (car) => {
         await createCar(car);
@@ -152,6 +176,7 @@ export default class GarageView {
     );
 
     const { cars, totalCars } = await getAllCars(this.page);
+    this.hideLoading();
 
     this.carsListEl.remove();
     this.carsListEl = document.createElement('ul');
@@ -191,8 +216,10 @@ export default class GarageView {
     nameInput.value = '';
     colorInput.value = '#000000';
 
+    this.showLoading();
     await updateCar(selectedCarId, updatedData);
     const { cars } = await getAllCars(this.page);
+    this.hideLoading();
 
     this.carsListEl.remove();
     this.carsListEl = document.createElement('ul');
@@ -200,10 +227,12 @@ export default class GarageView {
   }
 
   async deleteSelectedCar(carId: number) {
+    this.showLoading();
     await deleteCar(carId);
     await deleteWinner(carId);
 
     const { cars, totalCars } = await getAllCars(this.page);
+    this.hideLoading();
 
     this.carsListEl.remove();
     this.carsListEl = document.createElement('ul');
